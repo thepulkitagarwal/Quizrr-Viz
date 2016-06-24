@@ -1,9 +1,8 @@
 var mysql = require('mysql');
 var elo = require('./elo.js');
 
-// define variables here
-members = {};
-questions = {};
+var members = {};
+var questions = {};
 
 function memberQuestionAttempt(member, question, score) {
 	elo.compete(member, question, score);
@@ -25,6 +24,9 @@ function compute() {
 
 	connection.query('select id, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity', function(err, rows, fields) {
 		if (err) throw err;
+
+		members = {};
+		questions = {};
 
 		for (var index in rows) {
 			var row = rows[index];

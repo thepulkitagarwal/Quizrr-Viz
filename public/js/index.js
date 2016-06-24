@@ -57,7 +57,7 @@ $.ajax({
 });
 
 labeller = []//["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"];
-for(var i = 1; i < 100; i += 1) {
+for(var i = 1; i <= 100; i += 1) {
     labeller.push(i);
 }
 var randomColorFactor = function() {

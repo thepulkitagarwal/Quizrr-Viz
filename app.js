@@ -3,8 +3,6 @@ var app = express();
 var path = require('path');
 var mydb = require('./mydb.js')
 
-mydb.setKFactor(1000);
-
 // express work
 app.use(express.static(path.join(__dirname, 'public')));
 
