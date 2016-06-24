@@ -1,6 +1,6 @@
 var k_factor = 32;
 
-exports.defineKFactor = function(k) {
+exports.setKFactor = function(k) {
 	k_factor = k;
 }
 

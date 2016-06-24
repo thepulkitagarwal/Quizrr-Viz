@@ -1,59 +1,9 @@
 var express = require('express');
 var app = express();
 var path = require('path');
-var mysql = require('mysql');
-var elo = require('./elo.js');
+var mydb = require('./mydb.js')
 
-// define variables here
-members = {};
-questions = {};
-
-function memberQuestionAttempt(member, question, score) {
-	elo.compete(member, question, score);
-
-	member.ratingHistory.push(member.rating);
-	question.ratingHistory.push(question.rating);
-}
-
-// Start with mysql work here.
-var connection = mysql.createConnection({
-	host     : 'localhost',
-	user     : 'deltastep',
-	password : 'password',
-	database : 'deltastep'
-});
-
-connection.connect();
-
-connection.query('select id, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity', function(err, rows, fields) {
-	if (err) throw err;
-
-	for (var index in rows) {
-		var row = rows[index];
-
-		if (!members[row.memberId]) {
-			members[row.memberId] = {
-				rating: 1400,
-				ratingHistory: [1400]
-			};
-		}
-
-		if (!questions[row.questionGroup]) {
-			questions[row.questionGroup] = {
-				rating: 1400,
-				ratingHistory: [1400]
-			};
-		}
-
-		if (row.answerStatus == "Right") 
-			memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 1);
-		else if (row.answerStatus == "Wrong")
-			memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 0);
-
-	}
-});
-
-connection.end();
+mydb.setKFactor(1000);
 
 // express work
 app.use(express.static(path.join(__dirname, 'public')));
@@ -64,13 +14,9 @@ app.get('/', function(req, res){
 
 app.get('/data/', function(req, res) {
 	if (req.xhr) {
-		console.log(req.query)
-		var data = [];
-		if (req.query.type == 'member') data = members[req.query.id].ratingHistory;
-		else if (req.query.type == 'question') data = questions[req.query.id].ratingHistory;
 		res.json({
 			label: req.query.type + ' ' + req.query.id,
-			data: data
+			data: mydb.getRatingHistory(req.query.type, req.query.id)
 		});
 	}
 });
