@@ -4,6 +4,56 @@ var elo = require('./elo.js');
 var members = {};
 var questions = {};
 
+var questionDifficulty = {};
+var memberRatingValue = 1400;
+var questionRatingValues = {
+	'Easy': 1400,
+	'Normal': 1400,
+	'Difficult': 1400
+}
+
+function getQuestionDifficulties() {
+	var connection = mysql.createConnection({
+		host     : 'localhost',
+		user     : 'deltastep',
+		password : 'password',
+		database : 'deltastep'
+	});
+
+	connection.connect();
+
+	var queryString = 'select distinct questionGroup, difficultyLevel from question_bank';
+
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) throw err;
+
+		for(var index in rows) {
+			var row = rows[index];
+
+			questionDifficulty[row.questionGroup] = row.difficultyLevel;
+		}
+	});
+
+	connection.end();
+}
+
+function setQuestionInitialRating(questionGroup) {
+	var value = questionRatingValues[questionDifficulty[questionGroup]];
+	if (!value) value = questionRatingValues['Easy'];
+
+	questions[questionGroup] = {
+		rating: value,
+		ratingHistory: [value]
+	};
+}
+
+function setMemberInitialRating(memberId) {
+	members[memberId] = {
+		rating: memberRatingValue,
+		ratingHistory: [memberRatingValue]
+	};
+}
+
 function memberQuestionAttempt(member, question, score) {
 	elo.compete(member, question, score);
 
@@ -11,7 +61,6 @@ function memberQuestionAttempt(member, question, score) {
 	question.ratingHistory.push(question.rating);
 }
 
-// Start with mysql work here.
 function compute() {
 	var connection = mysql.createConnection({
 		host     : 'localhost',
@@ -22,7 +71,9 @@ function compute() {
 
 	connection.connect();
 
-	connection.query('select id, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity', function(err, rows, fields) {
+	var queryString = 'select id, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity';
+
+	connection.query(queryString, function(err, rows, fields) {
 		if (err) throw err;
 
 		members = {};
@@ -31,19 +82,8 @@ function compute() {
 		for (var index in rows) {
 			var row = rows[index];
 
-			if (!members[row.memberId]) {
-				members[row.memberId] = {
-					rating: 1400,
-					ratingHistory: [1400]
-				};
-			}
-
-			if (!questions[row.questionGroup]) {
-				questions[row.questionGroup] = {
-					rating: 1400,
-					ratingHistory: [1400]
-				};
-			}
+			if (!members[row.memberId]) setMemberInitialRating(row.memberId);
+			if (!questions[row.questionGroup]) setQuestionInitialRating(row.questionGroup);
 
 			if (row.answerStatus == "Right") 
 				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 1);
@@ -56,6 +96,7 @@ function compute() {
 	connection.end();
 }
 
+getQuestionDifficulties();
 compute();
 
 exports.getRatingHistory = function(queryType, id) {
@@ -68,7 +109,16 @@ exports.getCurrentRating = function(queryType, id) {
 	if (queryType == 'question') return questions[id].rating;
 }
 
-exports.setKFactor = function(k) {
-	elo.setKFactor(k);
+exports.setDefaults = function(data) {
+	elo.setKFactor(data['KFactor'] || 32);
+
+	memberRatingValue = data['memberRating'] || 1400;
+
+	questionRatingValues = {
+		'Easy': data['questionRatings']['Easy'] || 1400,
+		'Normal': data['questionRatings']['Normal'] || 1400,
+		'Difficult': data['questionRatings']['Difficult'] || 1400
+	}
+
 	compute();
 }
