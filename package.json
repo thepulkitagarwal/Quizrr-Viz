@@ -1,0 +1,12 @@
+{
+  "name": "quizrr-viz",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "~4.13.1",
+    "mysql": "^2.11.1"
+  }
+}
