@@ -83,6 +83,17 @@ var graph = (function() {
 
 	return {
 		start: start,
-		drawLine: drawLine
+		drawLine: function(data) {
+			$.ajax({
+				url: '/data/',
+				data: data,
+				success: function(result) {
+					drawLine(result);
+				},
+				error: function(err) {
+					console.log(err);
+				}
+			});
+		}
 	}
 })();

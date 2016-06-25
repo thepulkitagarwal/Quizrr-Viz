@@ -1,31 +1,14 @@
-$.ajax({
-    url: '/data/',
-    data: {
-        type: 'member', 
-        id: '59054'
-    },
-    success: function(result) {
-        graph.drawLine(result);
-    },
-    error: function(err) {
-        console.log(err);
-    }
-});
-
-$.ajax({
-    url: '/data/',
-    data: {
-        type: 'member', 
-        id: '124'
-    },
-    success: function(result) {
-        graph.drawLine(result);
-    },
-    error: function(err) {
-        console.log(err);
-    }
+$('#addLine').click(function() {
+	graph.drawLine({
+		type: $('#linetype').val(),
+		id: $('#lineid').val()
+	});
 });
 
 window.onload = function() {
-    graph.start();
+	graph.start();
+	graph.drawLine({
+		type: 'member',
+		id: '59054'
+	});
 };
