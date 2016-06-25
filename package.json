@@ -6,6 +6,7 @@
     "start": "nodemon app.js"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "~4.13.1",
     "mysql": "^2.11.1"
   }

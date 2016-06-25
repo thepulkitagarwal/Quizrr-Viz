@@ -1,7 +1,8 @@
 var express = require('express');
 var app = express();
 var path = require('path');
-var mydb = require('./mydb.js')
+var mydb = require('./mydb.js');
+var bodyParser = require('body-parser');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -19,6 +20,17 @@ app.get('/data/', function(req, res) {
 	else {
 		res.send('Blocked Page.');
 	}
+});
+
+// for the form to change k-factor and other values
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
+
+app.post('/change', function(req, res) {
+	mydb.setDefaults(req.body);
+	res.redirect('/');
 });
 
 // error handlers

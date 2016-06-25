@@ -39,7 +39,7 @@ function getQuestionDifficulties() {
 
 function setQuestionInitialRating(questionGroup) {
 	var value = questionRatingValues[questionDifficulty[questionGroup]];
-	if (!value) value = questionRatingValues['Easy'];
+	if (!value) value = questionRatingValues['Normal'];
 
 	questions[questionGroup] = {
 		rating: value,
@@ -110,14 +110,14 @@ exports.getCurrentRating = function(queryType, id) {
 }
 
 exports.setDefaults = function(data) {
-	elo.setKFactor(data['KFactor'] || 32);
+	elo.setKFactor(parseInt(data['KFactor']) || 32);
 
-	memberRatingValue = data['memberRating'] || 1400;
+	memberRatingValue = parseInt(data['memberRating']) || 1400;
 
 	questionRatingValues = {
-		'Easy': data['questionRatings']['Easy'] || 1400,
-		'Normal': data['questionRatings']['Normal'] || 1400,
-		'Difficult': data['questionRatings']['Difficult'] || 1400
+		'Easy': parseInt(data['questionEasy']) || 1400,
+		'Normal': parseInt(data['questionNormal']) || 1400,
+		'Difficult': parseInt(data['questionDifficult']) || 1400
 	}
 
 	compute();

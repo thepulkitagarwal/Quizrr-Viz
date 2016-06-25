@@ -20,11 +20,24 @@
     </div>
     <br>
     <br>
-    <button id="randomizeData">Randomize Data</button>
-    <button id="addDataset">Add Dataset</button>
-    <button id="removeDataset">Remove Dataset</button>
-    <button id="addData">Add Data</button>
-    <button id="removeData">Remove Data</button>
+
+    <div>
+        <form action="/change" method="post">
+            <ul>
+                <li> K-Factor: <input type="number" name="KFactor"> </li>
+                <li> Member Rating: <input type="number" name="memberRating"> </li>
+                <li> Question Rating: <br>
+                    <ul>
+                        <li> Easy: <input type="number" name="questionEasy"> </li>
+                        <li> Normal: <input type="number" name="questionNormal"> </li>
+                        <li> Difficult: <input type="number" name="questionDifficult"> </li>
+                    </ul>
+                </li>
+            </ul>
+            <input type="submit" value="submit">
+        </form>
+    </div>
+
     <script src="/js/index.js"> </script>
 </body>
 
