@@ -1,6 +1,13 @@
 var mysql = require('mysql');
 var elo = require('./elo.js');
 
+var credentials = {
+	host     : 'localhost',
+	user     : 'deltastep',
+	password : 'password',
+	database : 'deltastep'
+};
+
 var members = {};
 var questions = {};
 
@@ -13,12 +20,7 @@ var questionRatingValues = {
 }
 
 function getQuestionDifficulties() {
-	var connection = mysql.createConnection({
-		host     : 'localhost',
-		user     : 'deltastep',
-		password : 'password',
-		database : 'deltastep'
-	});
+	var connection = mysql.createConnection(credentials);
 
 	connection.connect();
 
@@ -62,12 +64,7 @@ function memberQuestionAttempt(member, question, score) {
 }
 
 function compute() {
-	var connection = mysql.createConnection({
-		host     : 'localhost',
-		user     : 'deltastep',
-		password : 'password',
-		database : 'deltastep'
-	});
+	var connection = mysql.createConnection(credentials);
 
 	connection.connect();
 
