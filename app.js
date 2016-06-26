@@ -33,6 +33,11 @@ app.post('/change', function(req, res) {
 	res.redirect('/');
 });
 
+app.post('/lessonId', function(req, res) {
+	mydb.setLessonId(req.body);
+	res.redirect('/');
+});
+
 // error handlers
 // production error handler
 // no stacktraces leaked to user

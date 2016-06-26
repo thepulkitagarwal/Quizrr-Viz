@@ -19,6 +19,8 @@ var questionRatingValues = {
 	'Difficult': 1400
 }
 
+var lessonId = '';
+
 function getQuestionDifficulties() {
 	var connection = mysql.createConnection(credentials);
 
@@ -69,6 +71,9 @@ function compute() {
 	connection.connect();
 
 	var queryString = 'select id, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity';
+	if (lessonId) {
+		queryString +=  ' where lessonId = ' + mysql.escape(lessonId);
+	}
 
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) throw err;
@@ -118,4 +123,11 @@ exports.setDefaults = function(data) {
 	}
 
 	compute();
+}
+
+exports.setLessonId = function(data) {
+	if (data['lessonId'] || data['lessonId'] == '') {
+		lessonId = data['lessonId'];
+		compute();
+	}
 }
