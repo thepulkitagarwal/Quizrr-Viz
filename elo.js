@@ -4,16 +4,16 @@ exports.setKFactor = function(k) {
 	k_factor = k;
 }
 
-exports.compete = function(objectA, objectB, scoreA) { 
+exports.compete = function(member, question, scoreA) { 
 	function expectedScore(R1, R2) {
 		return 1 / (1 + Math.pow(10, (R2 - R1)/400));
 	}
 	// scoreA = If a wins: 1, loss: 0
 	var scoreB = 1 - scoreA;
 
-	var Ra = objectA.rating + k_factor * (scoreA - expectedScore(objectA.rating, objectB.rating));
-	var Rb = objectB.rating + k_factor * (scoreB - expectedScore(objectB.rating, objectA.rating));
+	var Ra = member.rating + k_factor * (scoreA - expectedScore(member.rating, question.rating));
+	var Rb = question.rating + k_factor * (scoreB - expectedScore(question.rating, member.rating));
 
-	objectA.rating = Ra;
-	objectB.rating = Rb;
+	member.rating = Ra;
+	question.rating = Rb;
 }
