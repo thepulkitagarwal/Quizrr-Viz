@@ -4,6 +4,10 @@ exports.setKFactor = function(k) {
 	k_factor = k;
 }
 
+exports.getKFactor = function() {
+	return k_factor;
+}
+
 exports.compete = function(member, question, scoreA) { 
 	function expectedScore(R1, R2) {
 		return 1 / (1 + Math.pow(10, (R2 - R1)/400));

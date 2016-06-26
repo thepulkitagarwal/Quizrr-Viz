@@ -107,14 +107,14 @@ exports.getCurrentRating = function(queryType, id) {
 }
 
 exports.setDefaults = function(data) {
-	elo.setKFactor(parseInt(data['KFactor']) || 32);
+	elo.setKFactor(parseInt(data['KFactor']) || elo.getKFactor());
 
-	memberRatingValue = parseInt(data['memberRating']) || 1400;
+	memberRatingValue = parseInt(data['memberRating']) || memberRatingValue;
 
 	questionRatingValues = {
-		'Easy': parseInt(data['questionEasy']) || 1400,
-		'Normal': parseInt(data['questionNormal']) || 1400,
-		'Difficult': parseInt(data['questionDifficult']) || 1400
+		'Easy': parseInt(data['questionEasy']) || questionRatingValues['Easy'],
+		'Normal': parseInt(data['questionNormal']) || questionRatingValues['Normal'],
+		'Difficult': parseInt(data['questionDifficult']) || questionRatingValues['Difficult']
 	}
 
 	compute();
