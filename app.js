@@ -13,7 +13,7 @@ app.get('/', function(req, res){
 app.get('/data/', function(req, res) {
 	if (req.xhr) {
 		res.json({
-			label: req.query.type + ' ' + req.query.id,
+			label: req.query.type + '-' + req.query.id,
 			data: mydb.getRatingHistory(req.query.type, req.query.id)
 		});
 	}

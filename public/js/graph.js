@@ -76,6 +76,35 @@ var graph = (function() {
 		window.myLine.update();
 	}
 
+	function xhrDrawLine(data) {
+		$.ajax({
+			url: '/data/',
+			data: data,
+			success: function(result) {
+				drawLine(result);
+			},
+			error: function(err) {
+				console.log(err);
+			}
+		});
+	}
+
+	function removeLine(dataStr) {
+		console.log();
+		var index = -1;
+		for(var i in config.data.datasets) {
+			var dataset = config.data.datasets[i];
+			if(dataset.label == dataStr) {
+				index = i;
+				break;
+			}
+		}
+		if (index > -1) {
+			config.data.datasets.splice(index, 1);
+		}
+		window.myLine.update();
+	}
+
 	function start() {
 		var ctx = document.getElementById("canvas").getContext("2d");
 		window.myLine = new Chart(ctx, config);
@@ -83,17 +112,7 @@ var graph = (function() {
 
 	return {
 		start: start,
-		drawLine: function(data) {
-			$.ajax({
-				url: '/data/',
-				data: data,
-				success: function(result) {
-					drawLine(result);
-				},
-				error: function(err) {
-					console.log(err);
-				}
-			});
-		}
+		drawLine: xhrDrawLine,
+		removeLine: removeLine 
 	}
 })();

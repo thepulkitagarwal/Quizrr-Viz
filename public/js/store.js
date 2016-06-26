@@ -35,7 +35,19 @@ var store = (function() {
 	}
 
 	return {
+		getAllRequests: function() {
+			return requests.map(function(current) {
+				var items = current.split('-');
+				return {
+					type: items[0],
+					id: items[1]
+				};
+			});
+		},
 		addData: addData,
-		removeData: removeData
+		removeData: removeData,
+		inStore: function(req) {
+			return requests.indexOf(req.type + '-' + req.id) > -1;
+		}
 	}
 })();
