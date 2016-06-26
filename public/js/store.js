@@ -1,6 +1,6 @@
 var store = (function() {
 	var historyDiv = $('#historyDiv');
-	var element = '<div class="input-group" id="history-%data%">'
+	var element = '<div class="input-group" id="history-%data%" style="margin:5px;">'
 					+ '<span class="form-control">%data%</span>'
 					+ '<span class="input-group-btn">'
 					+ '<button class="btn btn-danger destroy" onclick="removeLine(\'%data%\')">x</button>'
