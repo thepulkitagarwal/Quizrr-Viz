@@ -44,6 +44,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#graph">Graph</a></li>
                 <li><a href="#changeDefaults">Change Defaults</a></li>
+                <li><a href="#history">History</a></li>
             </ul>
         </div>
     </nav>
@@ -56,7 +57,7 @@
     <br>
 
     <div class="container-fluid">
-        <div class="well col-sm-offset-3 col-sm-6">
+        <div id="changeDefaultsDiv" class="well col-sm-6">
             <h3><a name="changeDefaults">Change Defaults</a></h3>
             <form class="form-horizontal" action="/change" method="post" role="form">
                 <div class="form-group">
@@ -101,8 +102,15 @@
                 </div>
             </form>
         </div>
+
+        <div id="historyDiv" class="well col-sm-6" style="overflow-y:scroll;">
+            <h3><a name="history">History</a></h3>
+
+
+        </div>
     </div>
 
+    <script src="/js/store.js"></script>
     <script src="/js/graph.js"></script>
     <script src="/js/index.js"></script>
 </body>
