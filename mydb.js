@@ -112,15 +112,13 @@ exports.getCurrentRating = function(queryType, id) {
 }
 
 exports.setDefaults = function(data) {
-	elo.setKFactor(parseInt(data['KFactor']) || elo.getKFactor());
+	if (data['KFactor']) elo.setKFactor(parseInt(data['KFactor']));
 
-	memberRatingValue = parseInt(data['memberRating']) || memberRatingValue;
+	if (data['memberRating']) memberRatingValue = parseInt(data['memberRating']);
 
-	questionRatingValues = {
-		'Easy': parseInt(data['questionEasy']) || questionRatingValues['Easy'],
-		'Normal': parseInt(data['questionNormal']) || questionRatingValues['Normal'],
-		'Difficult': parseInt(data['questionDifficult']) || questionRatingValues['Difficult']
-	}
+	if (data['questionEasy']) questionRatingValues['Easy'] = parseInt(data['questionEasy']);
+	if (data['questionNormal']) questionRatingValues['Normal'] = parseInt(data['questionNormal']);
+	if (data['questionDifficult']) questionRatingValues['Difficult'] = parseInt(data['questionDifficult']);
 
 	compute();
 }
