@@ -10,7 +10,7 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/data/', function(req, res) {
+app.get('/data', function(req, res) {
 	if (req.xhr) {
 		res.json({
 			label: req.query.type + '-' + req.query.id,
@@ -20,6 +20,12 @@ app.get('/data/', function(req, res) {
 	}
 	else {
 		res.send('Blocked Page.');
+	}
+});
+
+app.get('/defaults', function(req, res) {
+	if(req.xhr) {
+		res.json(mydb.getDefaults());
 	}
 });
 

@@ -139,6 +139,16 @@ exports.setDefaults = function(data) {
 	compute();
 }
 
+exports.getDefaults = function() {
+	return {
+		KFactor: elo.getKFactor(),
+		memberRating: memberRatingValue,
+		questionEasy: questionRatingValues['Easy'],
+		questionNormal: questionRatingValues['Normal'],
+		questionDifficult: questionRatingValues['Difficult']
+	}
+}
+
 exports.setLessonId = function(data) {
 	if (data['lessonId'] || data['lessonId'] == '') {
 		lessonId = data['lessonId'];
