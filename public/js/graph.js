@@ -46,6 +46,13 @@ var graph = (function() {
 			title: {
 				display: true,
 				text: 'Scores'
+			},
+			tooltips: {
+				callbacks: {
+					afterLabel: function(tooltipItem, data) {
+						return '[' + data.datasets[tooltipItem.datasetIndex].activity[tooltipItem.index] +']';
+					}
+				}
 			}
 		}
 	};
@@ -70,6 +77,7 @@ var graph = (function() {
 			pointBorderWidth: 1,
 			fill: false,
 			data: linedata.data,
+			activity: linedata.activity
 		};
 
 		config.data.datasets.push(newDataset);

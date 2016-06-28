@@ -46,23 +46,34 @@ function setQuestionInitialRating(questionGroup) {
 	if (!value) value = questionRatingValues['Normal'];
 
 	questions[questionGroup] = {
+		id: questionGroup,
 		rating: value,
-		ratingHistory: [value]
+		ratingHistory: [value],
+		activityHistory: []
 	};
 }
 
 function setMemberInitialRating(memberId) {
 	members[memberId] = {
+		id: memberId,
 		rating: memberRatingValue,
-		ratingHistory: [memberRatingValue]
+		ratingHistory: [memberRatingValue],
+		activityHistory: []
 	};
 }
 
 function memberQuestionAttempt(member, question, score) {
+	activityString = {
+		member: 'q' + question.id + ', ' + questionDifficulty[question.id] + ', ' + question.rating,
+		question: 'm' + member.id + ', ' + member.rating,
+	}
 	elo.compete(member, question, score);
 
 	member.ratingHistory.push(member.rating);
+	member.activityHistory.push(activityString.member + '->' + question.rating);
+
 	question.ratingHistory.push(question.rating);
+	question.activityHistory.push(activityString.question + '->' + member.rating);
 }
 
 function compute() {
@@ -104,6 +115,11 @@ compute();
 exports.getRatingHistory = function(queryType, id) {
 	if (queryType == 'member') return members[id].ratingHistory;
 	if (queryType == 'question') return questions[id].ratingHistory;
+}
+
+exports.getActivityHistory = function(queryType, id) {
+	if (queryType == 'member') return members[id].activityHistory;
+	if (queryType == 'question') return questions[id].activityHistory;
 }
 
 exports.getCurrentRating = function(queryType, id) {
