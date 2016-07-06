@@ -90,7 +90,7 @@ function compute() {
 
 	connection.connect();
 
-	var queryString = 'select id, lessonId, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity';
+	var queryString = 'select id, lessonId, memberId, questionGroup, group_concat(answerStatus) as answerStatus, hintTakenCount from practice_question_activity group by questionGroup, memberId';
 	
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) throw err;
@@ -109,10 +109,14 @@ function compute() {
 			if (!questions[row.questionGroup])
 				setQuestionInitialRating(row.questionGroup);
 
-			if (row.answerStatus == "Right") 
-				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 1, row.lessonId);
-			else if (row.answerStatus == "Wrong")
-				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 0, row.lessonId);
+			answerStatusArray = row.answerStatus.split(',');
+
+			for(var index = 0; index < answerStatusArray.length && index < 3; index += 1) {
+				if (answerStatusArray[index] == "Right") 
+					memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 1, row.lessonId);
+				else if (answerStatusArray[index] == "Wrong")
+					memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 0, row.lessonId);
+			}
 
 		}
 	});
