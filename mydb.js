@@ -89,10 +89,7 @@ function compute() {
 	connection.connect();
 
 	var queryString = 'select id, lessonId, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity';
-	if (userLessonId) {
-		queryString +=  ' where lessonId = ' + mysql.escape(userLessonId);
-	}
-
+	
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) throw err;
 
@@ -165,6 +162,5 @@ exports.getDefaults = function() {
 exports.setLessonId = function(data) {
 	if (data['lessonId'] || data['lessonId'] == '') {
 		userLessonId = data['lessonId'];
-		compute();
 	}
 }
