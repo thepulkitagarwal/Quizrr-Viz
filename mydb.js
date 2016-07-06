@@ -157,7 +157,8 @@ exports.getDefaults = function() {
 		memberRating: memberRatingValue,
 		questionEasy: questionRatingValues['Easy'],
 		questionNormal: questionRatingValues['Normal'],
-		questionDifficult: questionRatingValues['Difficult']
+		questionDifficult: questionRatingValues['Difficult'],
+		lessonId: userLessonId
 	};
 }
 

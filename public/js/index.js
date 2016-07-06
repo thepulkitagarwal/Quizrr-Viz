@@ -22,6 +22,7 @@ function getDefaults() {
 			$('#defaults-form').find("input[type=number]").each(function() {
 				$(this).attr("placeholder", result[$(this).context.name]);
 			});
+			$('#lessonId').attr("placeholder", result.lessonId);
 		},
 		error: function(err) {
 			console.log(err);
