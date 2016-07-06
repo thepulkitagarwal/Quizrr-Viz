@@ -63,6 +63,8 @@ function setMemberInitialRating(memberId, lessonId) {
 function setMemberInitialLessonRating(memberId, lessonId) {
 	members[memberId].ratings[lessonId] = {
 		rating: memberRatingValue,
+		streakRight: 0,
+		streakWrong: 0,
 		ratingHistory: [memberRatingValue],
 		activityHistory: []
 	};
@@ -138,6 +140,7 @@ exports.getCurrentRating = function(queryType, id) {
 
 exports.setDefaults = function(data) {
 	if (data['KFactor']) elo.setKFactor(parseInt(data['KFactor']));
+	if (data['streakFactor']) elo.setStreakFactor(parseInt(data['streakFactor']));
 
 	if (data['memberRating']) memberRatingValue = parseInt(data['memberRating']);
 
@@ -151,6 +154,7 @@ exports.setDefaults = function(data) {
 exports.getDefaults = function() {
 	return {
 		KFactor: elo.getKFactor(),
+		streakFactor: elo.getStreakFactor(),
 		memberRating: memberRatingValue,
 		questionEasy: questionRatingValues['Easy'],
 		questionNormal: questionRatingValues['Normal'],
@@ -160,7 +164,5 @@ exports.getDefaults = function() {
 }
 
 exports.setLessonId = function(data) {
-	if (data['lessonId'] || data['lessonId'] == '') {
-		userLessonId = data['lessonId'];
-	}
+	if (data['lessonId']) userLessonId = data['lessonId'];
 }
