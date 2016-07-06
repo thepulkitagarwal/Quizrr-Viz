@@ -19,7 +19,7 @@ var questionRatingValues = {
 	'Difficult': 1400
 }
 
-var lessonId = '';
+var userLessonId = '126';
 
 function getQuestionDifficulties() {
 	var connection = mysql.createConnection(credentials);
@@ -53,27 +53,34 @@ function setQuestionInitialRating(questionGroup) {
 	};
 }
 
-function setMemberInitialRating(memberId) {
+function setMemberInitialRating(memberId, lessonId) {
 	members[memberId] = {
 		id: memberId,
+		ratings: {}
+	};
+}
+
+function setMemberInitialLessonRating(memberId, lessonId) {
+	members[memberId].ratings[lessonId] = {
 		rating: memberRatingValue,
 		ratingHistory: [memberRatingValue],
 		activityHistory: []
 	};
 }
 
-function memberQuestionAttempt(member, question, score) {
-	activityString = {
+function memberQuestionAttempt(member, question, score, lessonId) {
+	var activityString = {
 		member: 'q' + question.id + ', ' + questionDifficulty[question.id] + ', ' + question.rating,
-		question: 'm' + member.id + ', ' + member.rating,
+		question: 'm' + member.id + ', ' + member.ratings[lessonId].rating,
 	}
-	elo.compete(member, question, score);
 
-	member.ratingHistory.push(member.rating);
-	member.activityHistory.push(activityString.member + '->' + question.rating);
+	elo.compete(member.ratings[lessonId], question, score);
+
+	member.ratings[lessonId].ratingHistory.push(member.ratings[lessonId].rating);
+	member.ratings[lessonId].activityHistory.push(activityString.member + '->' + question.rating);
 
 	question.ratingHistory.push(question.rating);
-	question.activityHistory.push(activityString.question + '->' + member.rating);
+	question.activityHistory.push(activityString.question + '->' + member.ratings[lessonId].rating);
 }
 
 function compute() {
@@ -81,9 +88,9 @@ function compute() {
 
 	connection.connect();
 
-	var queryString = 'select id, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity';
-	if (lessonId) {
-		queryString +=  ' where lessonId = ' + mysql.escape(lessonId);
+	var queryString = 'select id, lessonId, memberId, questionGroup, answerStatus, hintTakenCount from practice_question_activity';
+	if (userLessonId) {
+		queryString +=  ' where lessonId = ' + mysql.escape(userLessonId);
 	}
 
 	connection.query(queryString, function(err, rows, fields) {
@@ -95,13 +102,18 @@ function compute() {
 		for (var index in rows) {
 			var row = rows[index];
 
-			if (!members[row.memberId]) setMemberInitialRating(row.memberId);
-			if (!questions[row.questionGroup]) setQuestionInitialRating(row.questionGroup);
+			if (!members[row.memberId])
+				setMemberInitialRating(row.memberId);
+			if (!members[row.memberId].ratings[row.lessonId])
+				setMemberInitialLessonRating(row.memberId, row.lessonId);
+
+			if (!questions[row.questionGroup])
+				setQuestionInitialRating(row.questionGroup);
 
 			if (row.answerStatus == "Right") 
-				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 1);
+				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 1, row.lessonId);
 			else if (row.answerStatus == "Wrong")
-				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 0);
+				memberQuestionAttempt(members[row.memberId], questions[row.questionGroup], 0, row.lessonId);
 
 		}
 	});
@@ -113,17 +125,17 @@ getQuestionDifficulties();
 compute();
 
 exports.getRatingHistory = function(queryType, id) {
-	if (queryType == 'member') return members[id].ratingHistory;
+	if (queryType == 'member') return members[id].ratings[userLessonId].ratingHistory;
 	if (queryType == 'question') return questions[id].ratingHistory;
 }
 
 exports.getActivityHistory = function(queryType, id) {
-	if (queryType == 'member') return members[id].activityHistory;
+	if (queryType == 'member') return members[id].ratings[userLessonId].activityHistory;
 	if (queryType == 'question') return questions[id].activityHistory;
 }
 
 exports.getCurrentRating = function(queryType, id) {
-	if (queryType == 'member') return members[id].rating;
+	if (queryType == 'member') return members[id].ratings[userLessonId].rating;
 	if (queryType == 'question') return questions[id].rating;
 }
 
@@ -146,12 +158,12 @@ exports.getDefaults = function() {
 		questionEasy: questionRatingValues['Easy'],
 		questionNormal: questionRatingValues['Normal'],
 		questionDifficult: questionRatingValues['Difficult']
-	}
+	};
 }
 
 exports.setLessonId = function(data) {
 	if (data['lessonId'] || data['lessonId'] == '') {
-		lessonId = data['lessonId'];
+		userLessonId = data['lessonId'];
 		compute();
 	}
 }
