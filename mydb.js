@@ -71,7 +71,7 @@ function setMemberInitialLessonRating(memberId, lessonId) {
 function memberQuestionAttempt(member, question, score, lessonId) {
 	var activityString = {
 		member: 'q' + question.id + ', ' + questionDifficulty[question.id] + ', ' + question.rating,
-		question: 'm' + member.id + ', ' + member.ratings[lessonId].rating,
+		question: 'm' + member.id + ', ' + 'Lesson ' + lessonId + ', ' + member.ratings[lessonId].rating
 	}
 
 	elo.compete(member.ratings[lessonId], question, score);
