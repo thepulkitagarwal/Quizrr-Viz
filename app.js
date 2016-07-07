@@ -41,10 +41,18 @@ app.get('/members', function(req, res) {
 });
 
 app.get('/questions', function(req, res) {
+	var diff = req.query.diff || 1000;
 	var questions = mydb.getAllQuestions();
 	var questionStr = 'questionGroup,initialRating,finalRating<br>';
 	Object.keys(questions).forEach(function(questionGroup) {
+		var addDiv = Math.abs(questions[questionGroup].ratingHistory[0] - questions[questionGroup].rating) >= diff;
+		if (addDiv) {
+			questionStr += '<div style="color:red">';
+		}
 		questionStr += '"' + questionGroup + '","' + questions[questionGroup].ratingHistory[0] + '","' + questions[questionGroup].rating + '"<br>';
+		if (addDiv) {
+			questionStr += '</div>';
+		}
 	});
 	res.send(questionStr);
 });
