@@ -30,11 +30,28 @@ app.get('/defaults', function(req, res) {
 });
 
 app.get('/members', function(req, res) {
+	var green = req.query.green || 2000;
+	var red = req.query.red || 0;
+
 	var members = mydb.getAllMembers();
 	var memberStr = 'memberId,lessonId,finalRating<br>';
 	Object.keys(members).forEach(function(memberId) {
 		Object.keys(members[memberId].ratings).forEach(function(lessonId) {
+			var greenDiv = members[memberId].ratings[lessonId].rating >= green;
+			var redDiv = members[memberId].ratings[lessonId].rating <= red;
+
+			if (greenDiv) {
+				memberStr += '<div style="color:green">';
+			}
+			else if (redDiv) {
+				memberStr += '<div style="color:red">';
+			}
+			
 			memberStr += '"' + memberId +'","' + lessonId + '","' + members[memberId].ratings[lessonId].rating + '"<br>';
+			
+			if (greenDiv || redDiv) {
+				memberStr += '</div>';
+			}
 		});
 	});
 	res.send(memberStr);
@@ -42,6 +59,7 @@ app.get('/members', function(req, res) {
 
 app.get('/questions', function(req, res) {
 	var diff = req.query.diff || 1000;
+	
 	var questions = mydb.getAllQuestions();
 	var questionStr = 'questionGroup,initialRating,finalRating<br>';
 	Object.keys(questions).forEach(function(questionGroup) {
@@ -49,7 +67,9 @@ app.get('/questions', function(req, res) {
 		if (addDiv) {
 			questionStr += '<div style="color:red">';
 		}
+		
 		questionStr += '"' + questionGroup + '","' + questions[questionGroup].ratingHistory[0] + '","' + questions[questionGroup].rating + '"<br>';
+		
 		if (addDiv) {
 			questionStr += '</div>';
 		}
@@ -78,6 +98,7 @@ app.post('/lessonId', function(req, res) {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
 	res.status(err.status || 500);
+	console.log(err);
 	res.send('Error. Please Refresh.');
 });
 
