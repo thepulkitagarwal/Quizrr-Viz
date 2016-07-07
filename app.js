@@ -29,6 +29,26 @@ app.get('/defaults', function(req, res) {
 	}
 });
 
+app.get('/members', function(req, res) {
+	var members = mydb.getAllMembers();
+	var memberStr = 'memberId,lessonId,finalRating<br>';
+	Object.keys(members).forEach(function(memberId) {
+		Object.keys(members[memberId].ratings).forEach(function(lessonId) {
+			memberStr += '"' + memberId +'","' + lessonId + '","' + members[memberId].ratings[lessonId].rating + '"<br>';
+		});
+	});
+	res.send(memberStr);
+});
+
+app.get('/questions', function(req, res) {
+	var questions = mydb.getAllQuestions();
+	var questionStr = 'questionGroup,initialRating,finalRating<br>';
+	Object.keys(questions).forEach(function(questionGroup) {
+		questionStr += '"' + questionGroup + '","' + questions[questionGroup].ratingHistory[0] + '","' + questions[questionGroup].rating + '"<br>';
+	});
+	res.send(questionStr);
+});
+
 // for the form to change k-factor and other values
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

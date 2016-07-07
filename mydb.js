@@ -170,3 +170,11 @@ exports.getDefaults = function() {
 exports.setLessonId = function(data) {
 	if (data['lessonId']) userLessonId = data['lessonId'];
 }
+
+exports.getAllMembers = function() {
+	return members;
+}
+
+exports.getAllQuestions = function() {
+	return questions;
+}
